@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Book from '../components/Book/Book';
-import books from '../fakeData/books.json'
+// import books from '../fakeData/books.json'
 import PageLayout from '../components/PageLayout/PageLayout';
+import { loadBooks } from '../redux/actions/bookActions';
+
 const Discover = () => {
+    const books = useSelector((state) => {
+        return state.books.discoverList;
+    })
+
+
+    const dispatch = useDispatch();
+
+    useEffect(() => dispatch(loadBooks()), [dispatch])
+
     return (
         <PageLayout>
             {

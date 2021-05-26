@@ -1,15 +1,32 @@
 import React from "react";
-import { 
-  HiPlusCircle, 
-  // HiMinusCircle,
-  // HiCheckCircle 
+import {
+  HiAcademicCap,
+  HiPlusCircle,
+  HiMinusCircle,
+  HiCheckCircle
 } from 'react-icons/hi';
+import { useDispatch, useSelector } from "react-redux";
+import { addToFinishedList, addToReadingList, removeFromReadingList } from "../../redux/actions/bookActions";
 import styles from './book.module.css'
+
 const SingleBook = (props) => {
-  const { title, author, coverImageUrl, synopsis } = props.book;
+  const { title, author, coverImageUrl, synopsis, id } = props.book;
+  const dispatch = useDispatch();
+
+  const readingBookList = useSelector((state) => {
+    return state.books.readingList;
+  })
+  const finishedBookList = useSelector((state) => {
+    return state.books.finishedList;
+  })
+
+  const inReadingBookList = readingBookList.find((book) => book.id === id);
+  const inFinishedBookList = finishedBookList.find((book) => book.id === id);
+
+  // console.log(inReadingBookList)
   return (
-    <div className='card d-flex mb-3 p-3' 
-      style={{position: 'relative'}}
+    <div className='card d-flex mb-3 p-3'
+      style={{ position: 'relative' }}
     >
       <div className='row'>
         <div className='col-md-3'>
@@ -24,8 +41,27 @@ const SingleBook = (props) => {
         </div>
       </div>
       <div className={styles.control_icons} >
+        {/* if not exist in reading or finished list */}
+        {
+          !inReadingBookList && !inFinishedBookList && (
+            <HiPlusCircle onClick={() => dispatch(addToReadingList(props.book))} title="Add to Reading" className={styles.plus_icon} />
+          )
+        }
+        {/* if not exist in reading list */}
+        {
+          inReadingBookList && (
+            <>
+              <HiMinusCircle onClick={() => dispatch(removeFromReadingList(id))} title="Remove from list" className={styles.minus_icon} />
+              <HiCheckCircle onClick={() => dispatch(addToFinishedList(props.book))} title="Mark as Finish" className={styles.check_icon} />
+            </>
+          )
+        }
+        {/* if exist in finished list */}
+        {inFinishedBookList && (
+          <HiAcademicCap title="Completed" className={styles.plus_icon} />
+        )}
         {/* <HiMinusCircle title="Remove from list" className={styles.minus_icon} /> */}
-        <HiPlusCircle title="Add to Reading" className={styles.plus_icon} />
+        {/* <HiPlusCircle onClick={() => dispatch(addToReadingList(props.book))} title="Add to Reading" className={styles.plus_icon} /> */}
         {/* <HiCheckCircle title="Mark as Finish" className={styles.check_icon} /> */}
       </div>
     </div>
